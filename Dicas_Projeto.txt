@@ -1,0 +1,32 @@
+# Donwload dos Dados Diárias e Passagens:
+https://portaldatransparencia.gov.br/download-de-dados/viagens
+# Dicionário de Dados
+https://portaldatransparencia.gov.br/pagina-interna/603364-dicion%C3%A1rio-de-dados-viagens-a-Servi%C3%A7o-Pagamentos
+
+# Começando com Pandas
+https://pandas.pydata.org/docs/getting_started/index.html#getting-started
+
+# para banco de dados
+https://docs.sqlalchemy.org/en/20/tutorial/engine.html
+
+
+# Sugestão de Pesquisas
+1. Somatorio de despesas por ano
+2. Coparação das despesas de 2023 até os 3 primeiros meses em comparação com os três primiros meses dos outros anos
+3. Agrupar total de depesas por órgãos pagadores (incluindo sigilo cod_orgao=-1)
+4. Porcentagem de viagens urgêntes, mês a mês. 
+5. Listar as justifivativas das viagens urgentes mais caras, em que mês ano.
+6. Listar Órgãos que pagam as maiores diárias, incluindo data início e data fim da viagens.
+
+# Sugestões de tarefas
+1. Fazer um parser para estruturar o destinos das viagens;
+2. Construir restrição de domínio para o campo situacao da tabela Viagem;
+3. Pode-se criar uma tabela pessoa para se retirar os dados do viagente da tabela viagem,
+mas sugiro não fazer, já que o CPF está descaracterizado.
+4. tabela de destinos 
+
+
+# Integrantes
+gbp1999@gmail.com
+marcusvbonifacio@gmail.com
+fgarujofh@gmail.com
