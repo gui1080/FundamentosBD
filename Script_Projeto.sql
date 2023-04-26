@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS orgao CASCADE;
 DROP TABLE IF EXISTS viagem CASCADE;
 DROP TABLE IF EXISTS pagamento CASCADE;
+DROP TABLE IF EXISTS passageiro CASCADE;
 
 -- Cria a tabela 'orgao'
 --  ['cod', 'nome', 'cnpj', 'codpoder', 'nomepoder', 'codtipoadministracao', 'nometipoadministracao']
@@ -32,11 +33,8 @@ CREATE TABLE viagem (
   codOrgSuperior INTEGER REFERENCES Orgao(cod),
   codOrgPagador INTEGER,
   codUnidGestoraPagadora INTEGER,
-  cpfViajante VARCHAR(14),
-  nome VARCHAR(150), 
-  cargo VARCHAR(150), 
-  funcao VARCHAR(150), 
-  descricaoFuncao VARCHAR(150), 
+  cpfViajante VARCHAR(14) NOT NULL,
+  nome VARCHAR(150) NOT NULL, 
   dataInicio DATE, 
   dataFim DATE, 
   destinos TEXT,
@@ -45,6 +43,21 @@ CREATE TABLE viagem (
   valorPassagens NUMERIC(15,2), 
   PRIMARY KEY (idProcessoViagem)
 );
+
+-- Cria a tabela 'passageiro'
+-- a partir de campos originalmente no .csv de "viagens"
+-- [ 'cpfviajante', 'nome', 'cargo', 'funcao', 'descricaofuncao']
+-- 1 passageiro pode ir a 0 ou n viagens
+CREATE TABLE passageiro (
+  idProcessoViagem INT REFERENCES viagem(idProcessoViagem),
+  cpfViajante VARCHAR(14) NOT NULL,
+  nome VARCHAR(150) NOT NULL, 
+  cargo VARCHAR(150), 
+  funcao VARCHAR(150), 
+  descricaoFuncao VARCHAR(150),
+  PRIMARY KEY (cpfViajante, nome)
+);
+
 
 -- Cria a tabela 'pagamento'
 -- ['idprocessoviagem', 'numproposta', 'codorgsuperior', 'codorgpagador', 'codunidgestorapagadora', 
