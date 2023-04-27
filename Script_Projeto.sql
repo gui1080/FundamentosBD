@@ -47,15 +47,18 @@ CREATE TABLE viagem (
   codOrgSuperior INTEGER REFERENCES Orgao(cod),
   codOrgPagador INTEGER,
   codUnidGestoraPagadora INTEGER,
-  cpfViajante VARCHAR(14) NOT NULL REFERENCES passageiro(cpfViajante),
-  nome VARCHAR(150) NOT NULL REFERENCES passageiro(nome), 
+  cpfViajante VARCHAR(14) NOT NULL,
+  nome VARCHAR(150) NOT NULL, 
   dataInicio DATE, 
   dataFim DATE, 
   destinos TEXT,
   motivo TEXT, 
   valorDiarias NUMERIC(15,2),
   valorPassagens NUMERIC(15,2), 
-  PRIMARY KEY (idProcessoViagem)
+  PRIMARY KEY (idProcessoViagem),
+  CONSTRAINT fk_passageiro 
+    FOREIGN KEY (cpfViajante, nome)
+    REFERENCES passageiro(cpfViajante, nome)
 );
 
 
