@@ -26,6 +26,11 @@ mas sugiro não fazer, já que o CPF está descaracterizado.
 4. tabela de destinos 
 
 
+# Ideia para construção do trigger:
+1. Construir um trigger na tabela trecho para resolver a questão do seqTrecho
+que faz parte da chave composta da tabela.
+
+
 # Integrantes
 gbp1999@gmail.com
 marcusvbonifacio@gmail.com

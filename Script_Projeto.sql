@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS orgao CASCADE;
 DROP TABLE IF EXISTS viagem CASCADE;
 DROP TABLE IF EXISTS pagamento CASCADE;
 DROP TABLE IF EXISTS passageiro CASCADE;
+DROP TABLE IF EXISTS trecho CASCADE;
 
 -- Cria a tabela 'orgao'
 --  ['cod', 'nome', 'cnpj', 'codpoder', 'nomepoder', 'codtipoadministracao', 'nometipoadministracao']
@@ -61,6 +62,28 @@ CREATE TABLE viagem (
     REFERENCES passageiro(cpfViajante, nome)
 );
 
+-- Cria Tabela Trecho
+-- campos = ['idprocessoviagem', 'seqtrecho', 'dataorigem', 'paisorigem', 'uforigem', 'cidadeorigem',
+--           'datadestino', 'paisdestino', 'ufdestino', 'cidadedestino',
+--           'meiotrasnporte', 'numdiarias', 'missao' 
+-- ]
+-- cols =   [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+CREATE TABLE trecho (
+  idProcessoViagem INT NOT NULL REFERENCES viagem (idProcessoViagem),
+  seqTrecho INT NOT NULL,
+  dataOrigem DATE, 
+  paisOrigem VARCHAR(150),
+  UFOrigem VARCHAR(50),
+  cidadeOrigem VARCHAR(150), 
+  dataDestino DATE, 
+  paisDestino VARCHAR(150),
+  UFDestino VARCHAR(50),
+  cidadeDestino VARCHAR(150), 
+  meioTrasnporte VARCHAR(50),
+  numDiarias NUMERIC(5,2),
+  missao BOOLEAN,
+  PRIMARY KEY (idProcessoViagem, seqTrecho)
+);
 
 -- Cria a tabela 'pagamento'
 -- ['idprocessoviagem', 'numproposta', 'codorgsuperior', 'codorgpagador', 'codunidgestorapagadora', 
