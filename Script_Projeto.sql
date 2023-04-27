@@ -17,6 +17,20 @@ CREATE TABLE orgao (
   PRIMARY KEY (cod)
 );
 
+-- Cria a tabela 'passageiro'
+-- a partir de campos originalmente no .csv de "viagens"
+-- [ 'cpfviajante', 'nome', 'cargo', 'funcao', 'descricaofuncao']
+-- 1 passageiro pode ir a 0 ou n viagens
+CREATE TABLE passageiro (
+  cpfViajante VARCHAR(14) NOT NULL,
+  nome VARCHAR(150) NOT NULL, 
+  cargo VARCHAR(150), 
+  funcao VARCHAR(150), 
+  descricaoFuncao VARCHAR(150),
+  PRIMARY KEY (cpfViajante, nome)
+);
+
+
 -- Cria tabela Viagem
 -- [ 'idProcessoViagem', 'numproposta', 'situacao', 'viagemurgente', 'justificativaurgencia', 
 --   'codorgsuperior', 'codorgpagador', 'cpfviajante', 
@@ -33,8 +47,8 @@ CREATE TABLE viagem (
   codOrgSuperior INTEGER REFERENCES Orgao(cod),
   codOrgPagador INTEGER,
   codUnidGestoraPagadora INTEGER,
-  cpfViajante VARCHAR(14) NOT NULL,
-  nome VARCHAR(150) NOT NULL, 
+  cpfViajante VARCHAR(14) NOT NULL REFERENCES passageiro(cpfViajante),
+  nome VARCHAR(150) NOT NULL REFERENCES passageiro(nome), 
   dataInicio DATE, 
   dataFim DATE, 
   destinos TEXT,
@@ -42,20 +56,6 @@ CREATE TABLE viagem (
   valorDiarias NUMERIC(15,2),
   valorPassagens NUMERIC(15,2), 
   PRIMARY KEY (idProcessoViagem)
-);
-
--- Cria a tabela 'passageiro'
--- a partir de campos originalmente no .csv de "viagens"
--- [ 'cpfviajante', 'nome', 'cargo', 'funcao', 'descricaofuncao']
--- 1 passageiro pode ir a 0 ou n viagens
-CREATE TABLE passageiro (
-  idProcessoViagem INT REFERENCES viagem(idProcessoViagem),
-  cpfViajante VARCHAR(14) NOT NULL,
-  nome VARCHAR(150) NOT NULL, 
-  cargo VARCHAR(150), 
-  funcao VARCHAR(150), 
-  descricaoFuncao VARCHAR(150),
-  PRIMARY KEY (cpfViajante, nome)
 );
 
 
