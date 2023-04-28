@@ -45,7 +45,7 @@ CREATE TABLE viagem (
   situacao VARCHAR(18),
   viagemUrgente BOOLEAN,
   justificativaUrgencia TEXT,
-  codOrgSuperior INTEGER REFERENCES Orgao(cod),
+  codOrgSuperior INTEGER,
   codOrgPagador INTEGER,
   codUnidGestoraPagadora INTEGER,
   cpfViajante VARCHAR(14) NOT NULL,
@@ -59,7 +59,11 @@ CREATE TABLE viagem (
   PRIMARY KEY (idProcessoViagem),
   CONSTRAINT fk_passageiro 
     FOREIGN KEY (cpfViajante, nome)
-    REFERENCES passageiro(cpfViajante, nome)
+    REFERENCES passageiro(cpfViajante, nome),
+  CONSTRAINT fk_orgao
+    FOREIGN KEY (codOrgSuperior)
+    REFERENCES orgao(cod)
+
 );
 
 -- Cria Tabela Trecho
@@ -69,7 +73,7 @@ CREATE TABLE viagem (
 -- ]
 -- cols =   [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 CREATE TABLE trecho (
-  idProcessoViagem INT NOT NULL REFERENCES viagem (idProcessoViagem),
+  idProcessoViagem INT NOT NULL,
   seqTrecho INT NOT NULL,
   dataOrigem DATE, 
   paisOrigem VARCHAR(150),
@@ -82,21 +86,48 @@ CREATE TABLE trecho (
   meioTrasnporte VARCHAR(50),
   numDiarias NUMERIC(5,2),
   missao BOOLEAN,
-  PRIMARY KEY (idProcessoViagem, seqTrecho)
+  PRIMARY KEY (idProcessoViagem, seqTrecho),
+  CONSTRAINT fk_viagem
+    FOREIGN KEY (idProcessoViagem)
+    REFERENCES viagem(idProcessoViagem)
 );
 
 -- Cria a tabela 'pagamento'
 -- ['idprocessoviagem', 'numproposta', 'codorgsuperior', 'codorgpagador', 'codunidgestorapagadora', 
 --  'tipopagamento', 'valor']
 CREATE TABLE pagamento (
-    id SERIAL PRIMARY KEY,
-    idProcessoViagem INTEGER REFERENCES viagem(idProcessoViagem),
-    numproposta VARCHAR(50),
-    codOrgSuperior INTEGER REFERENCES Orgao(cod),
-    codOrgPagador INTEGER,
-    codUnidGestoraPagadora INTEGER,
-    tipoPagamento VARCHAR(50),
-    valor NUMERIC(15,2)
+  id SERIAL PRIMARY KEY,
+  idProcessoViagem INTEGER,
+  numproposta VARCHAR(50),
+  codOrgSuperior INTEGER,
+  codOrgPagador INTEGER,
+  codUnidGestoraPagadora INTEGER,
+  tipoPagamento VARCHAR(50),
+  valor NUMERIC(15,2),
+  CONSTRAINT fk_viagem
+    FOREIGN KEY (idProcessoViagem)
+    REFERENCES viagem(idProcessoViagem),
+  CONSTRAINT fk_orgao
+    FOREIGN KEY (codOrgSuperior)
+    REFERENCES orgao(cod)  
 );
+
+-- Cria Trigger para Integridade do SeqTrecho
+CREATE OR REPLACE FUNCTION check_sequencial() RETURNS TRIGGER AS $$
+ BEGIN
+    -- Verifica se o sequencial do novo trecho é o próximo da sequência
+     IF NEW.seqTrecho <> (((SELECT COALESCE(MAX(seqTrecho), 0) FROM trecho WHERE idProcessoViagem = NEW.idProcessoViagem) + 1)) THEN
+       RAISE EXCEPTION 'O sequencial do novo trecho não segue a sequência correta!';
+    END IF;
+    
+    RETURN NEW;
+ END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER sequencial_trechos_viagem
+BEFORE INSERT OR UPDATE ON trecho
+FOR EACH ROW
+EXECUTE FUNCTION check_sequencial();
+
 
 
