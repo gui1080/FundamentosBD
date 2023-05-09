@@ -1,21 +1,76 @@
 -- Dropa tabelas caso existam
+DROP TABLE IF EXISTS pais CASCADE;
+DROP TABLE IF EXISTS uf CASCADE;
+DROP TABLE IF EXISTS cidade CASCADE;
+DROP TABLE IF EXISTS poder CASCADE;
+DROP TABLE IF EXISTS tipo_administracao CASCADE;
 DROP TABLE IF EXISTS orgao CASCADE;
 DROP TABLE IF EXISTS viagem CASCADE;
 DROP TABLE IF EXISTS pagamento CASCADE;
 DROP TABLE IF EXISTS passageiro CASCADE;
 DROP TABLE IF EXISTS trecho CASCADE;
 
+CREATE TABLE pais (
+  id INT NOT NULL,
+  nomePoder VARCHAR(50),
+  PRIMARY KEY (id)
+);
+
+CREATE TABLE uf (
+  id INT NOT NULL,
+  nome VARCHAR(50),
+  pais INT,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_pais
+    FOREIGN KEY (pais)
+    REFERENCES pais(id)
+);
+
+CREATE TABLE cidade (
+  id INT NOT NULL,
+  nome VARCHAR(50),
+  internacional INT,
+  nacional INT,
+  PRIMARY KEY (id),
+  CONSTRAINT fk_internacional 
+    FOREIGN KEY (internacional)
+    REFERENCES pais(id),
+  CONSTRAINT fk_nacional
+    FOREIGN KEY (nacional)
+    REFERENCES uf(id)
+);
+
+-- Cria a tabela 'poder'
+-- ['codpoder', 'nomepoder']
+CREATE TABLE poder (
+  codPoder INT NOT NULL,
+  nomePoder VARCHAR(50),
+  PRIMARY KEY (codPoder)
+);
+
+-- Cria a tabela 'tipo_administracao'
+-- ['codtipoadministracao', 'nometipoadministracao']
+CREATE TABLE tipo_administracao (
+  codTipoAdministracao INT NOT NULL,
+  nomeTipoAdministracao VARCHAR(50),
+  PRIMARY KEY (codTipoAdministracao)
+);
+
 -- Cria a tabela 'orgao'
---  ['cod', 'nome', 'cnpj', 'codpoder', 'nomepoder', 'codtipoadministracao', 'nometipoadministracao']
+--  ['cod', 'nome', 'cnpj', 'codPoder', 'codtipoadministracao']
 CREATE TABLE orgao (
   cod INT NOT NULL,
   nome VARCHAR(50) NOT NULL,
   CNPJ VARCHAR(18),
   codPoder INT,
-  nomePoder VARCHAR(50),
   codTipoAdministracao INT,
-  nomeTipoAdministracao VARCHAR(50),
-  PRIMARY KEY (cod)
+  PRIMARY KEY (cod),
+  CONSTRAINT fk_poder 
+    FOREIGN KEY (codPoder)
+    REFERENCES poder(codPoder),
+  CONSTRAINT fk_adm 
+    FOREIGN KEY (codTipoAdministracao)
+    REFERENCES tipo_administracao(codTipoAdministracao)
 );
 
 -- Cria a tabela 'passageiro'
@@ -47,7 +102,6 @@ CREATE TABLE viagem (
   justificativaUrgencia TEXT,
   codOrgSuperior INTEGER,
   codOrgPagador INTEGER,
-  codUnidGestoraPagadora INTEGER,
   cpfViajante VARCHAR(14) NOT NULL,
   nome VARCHAR(150) NOT NULL, 
   dataInicio DATE, 
@@ -60,8 +114,11 @@ CREATE TABLE viagem (
   CONSTRAINT fk_passageiro 
     FOREIGN KEY (cpfViajante, nome)
     REFERENCES passageiro(cpfViajante, nome),
-  CONSTRAINT fk_orgao
+  CONSTRAINT fk_orgao_sup
     FOREIGN KEY (codOrgSuperior)
+    REFERENCES orgao(cod),
+  CONSTRAINT fk_orgao_pag
+    FOREIGN KEY (codOrgPagador)
     REFERENCES orgao(cod)
 
 );
@@ -76,24 +133,26 @@ CREATE TABLE trecho (
   idProcessoViagem INT NOT NULL,
   seqTrecho INT NOT NULL,
   dataOrigem DATE, 
-  paisOrigem VARCHAR(150),
-  UFOrigem VARCHAR(50),
-  cidadeOrigem VARCHAR(150), 
+  cidadeOrigem INT, 
   dataDestino DATE, 
-  paisDestino VARCHAR(150),
-  UFDestino VARCHAR(50),
-  cidadeDestino VARCHAR(150), 
+  cidadeDestino INT, 
   meioTrasnporte VARCHAR(50),
   numDiarias NUMERIC(5,2),
   missao BOOLEAN,
   PRIMARY KEY (idProcessoViagem, seqTrecho),
   CONSTRAINT fk_viagem
     FOREIGN KEY (idProcessoViagem)
-    REFERENCES viagem(idProcessoViagem)
+    REFERENCES viagem(idProcessoViagem),
+  CONSTRAINT fk_origem
+    FOREIGN KEY (cidadeOrigem)
+    REFERENCES cidade(id),
+  CONSTRAINT fk_destino
+    FOREIGN KEY (cidadeDestino)
+    REFERENCES cidade(id)
 );
 
 -- Cria a tabela 'pagamento'
--- ['idprocessoviagem', 'numproposta', 'codorgsuperior', 'codorgpagador', 'codunidgestorapagadora', 
+-- ['idprocessoviagem', 'numproposta', 'codorgsuperior', 'codorgpagador', 
 --  'tipopagamento', 'valor']
 CREATE TABLE pagamento (
   id SERIAL PRIMARY KEY,
@@ -101,14 +160,16 @@ CREATE TABLE pagamento (
   numproposta VARCHAR(50),
   codOrgSuperior INTEGER,
   codOrgPagador INTEGER,
-  codUnidGestoraPagadora INTEGER,
   tipoPagamento VARCHAR(50),
   valor NUMERIC(15,2),
   CONSTRAINT fk_viagem
     FOREIGN KEY (idProcessoViagem)
     REFERENCES viagem(idProcessoViagem),
-  CONSTRAINT fk_orgao
+  CONSTRAINT fk_orgao_sup
     FOREIGN KEY (codOrgSuperior)
+    REFERENCES orgao(cod),  
+  CONSTRAINT fk_orgao_pag
+    FOREIGN KEY (codOrgPagador)
     REFERENCES orgao(cod)  
 );
 
