@@ -12,13 +12,13 @@ DROP TABLE IF EXISTS trecho CASCADE;
 
 CREATE TABLE pais (
   id INT NOT NULL,
-  nome VARCHAR(50),
+  pais VARCHAR(50),
   PRIMARY KEY (id)
 );
 
 CREATE TABLE uf (
   id INT NOT NULL,
-  nome VARCHAR(50),
+  uf VARCHAR(50),
   pais INT,
   PRIMARY KEY (id),
   CONSTRAINT fk_pais
@@ -28,7 +28,7 @@ CREATE TABLE uf (
 
 CREATE TABLE cidade (
   id INT NOT NULL,
-  nome VARCHAR(50),
+  cidade VARCHAR(50),
   internacional INT,
   nacional INT,
   PRIMARY KEY (id),
