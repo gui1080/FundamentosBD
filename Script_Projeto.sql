@@ -183,12 +183,10 @@ CREATE OR REPLACE FUNCTION check_sequencial() RETURNS TRIGGER AS $$
     
     RETURN NEW;
  END;
-$$ LANGUAGE plpgsql;
 
-CREATE TRIGGER sequencial_trechos_viagem
-BEFORE INSERT OR UPDATE ON trecho
-FOR EACH ROW
-EXECUTE FUNCTION check_sequencial();
+--$$ LANGUAGE plpgsql;
 
-
-
+-- CREATE TRIGGER sequencial_trechos_viagem
+-- BEFORE INSERT OR UPDATE ON trecho
+-- FOR EACH ROW
+-- EXECUTE FUNCTION check_sequencial();
