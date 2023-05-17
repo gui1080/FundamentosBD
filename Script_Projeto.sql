@@ -172,21 +172,3 @@ CREATE TABLE pagamento (
     FOREIGN KEY (codOrgPagador)
     REFERENCES orgao(cod)  
 );
-
--- Cria Trigger para Integridade do SeqTrecho
-CREATE OR REPLACE FUNCTION check_sequencial() RETURNS TRIGGER AS $$
- BEGIN
-    -- Verifica se o sequencial do novo trecho é o próximo da sequência
-     IF NEW.seqTrecho <> (((SELECT COALESCE(MAX(seqTrecho), 0) FROM trecho WHERE idProcessoViagem = NEW.idProcessoViagem) + 1)) THEN
-       RAISE EXCEPTION 'O sequencial do novo trecho não segue a sequência correta!';
-    END IF;
-    
-    RETURN NEW;
- END;
-
---$$ LANGUAGE plpgsql;
-
--- CREATE TRIGGER sequencial_trechos_viagem
--- BEFORE INSERT OR UPDATE ON trecho
--- FOR EACH ROW
--- EXECUTE FUNCTION check_sequencial();
